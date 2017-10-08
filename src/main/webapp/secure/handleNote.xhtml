@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
+     
+    <h:head>
+        <title>
+            <h:outputText value="Agregar nota" rendered="#{handleNoteBean.bookNote.idBookNote eq null}" />
+            <h:outputText value="Editar nota" rendered="#{handleNoteBean.bookNote.idBookNote ne null}" />
+        </title>
+        <style type="text/css">
+            .ui-widget {
+                font-size: 90%;
+            }
+        </style>
+    </h:head>
+     
+    <h:body>
+        <h:form>
+    <p:editor widgetVar="editor" value="#{handleNoteBean.bookNote.note}" height="300" style="margin-bottom:10px" />
+    <h:outputText value="Publica" />
+    <p:selectBooleanCheckbox value="#{handleNoteBean.bookNote.general}" />
+    <p:commandButton value="Agregar" actionListener="#{handleNoteBean.handleNote}" rendered="#{handleNoteBean.bookNote.idBookNote eq null}" />
+    <p:commandButton value="Editar" actionListener="#{handleNoteBean.handleNote}" rendered="#{handleNoteBean.bookNote.idBookNote ne null}" />
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 
+            
+          
+        </h:form>
+    </h:body>
+     
+</html>

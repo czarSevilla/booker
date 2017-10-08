@@ -1,0 +1,153 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<title><h:outputText value="#{labels['app.title']}" /></title>
+	<link href="#{resource['img:/favicon.ico']}" rel="shortcut icon" type="image/x-icon" />
+	<script>
+        var CJ = {};
+ 
+        CJ.collect = function(){
+            var allVals = [];
+            $('.custom-checkbox').each(function() {
+                if ($(this).hasClass('ui-state-active')) {
+                    allVals.push($('input', this).val());
+                }                  
+            });
+            $('input[id="mainForm:kvSelected"]').val(allVals);
+        };
+ 
+        CJ.selectAll = function() {
+            $('.custom-checkbox .ui-chkbox-icon').each(function(){
+                var current = this;
+                $(current).addClass("ui-icon-check");
+                $(current).removeClass("ui-icon-blank");
+                $(current).parent().addClass("ui-state-active");
+            });
+            $('input[id="mainForm:kvSelectedGrid"]').val('false');
+        };
+        CJ.selectAllGrid = function() {
+            CJ.selectAll();
+            $('input[id="mainForm:kvSelectedGrid"]').val('true');
+        };
+        
+        CJ.selectTag = function(tagName) {
+        	$('a', 'div[id="mainForm:tagCloudModel"]').removeClass('ui-state-active');
+        	$('a', 'div[id="mainForm:tagCloudModel"]').filter(function(){
+        		return $(this).text() === tagName;
+        	}).addClass('ui-state-active'); 
+            
+        };
+        
+        CJ.initCheckbox = function() {
+        	$('.custom-checkbox').hover(function(){
+                $(this).toggleClass("ui-state-hover");
+            });
+ 
+            $('.custom-checkbox .ui-chkbox-icon').click(function(){
+                var current = this;
+                $(current).toggleClass("ui-icon-check");
+                $(current).toggleClass("ui-icon-blank");
+                $(current).parent().toggleClass("ui-state-active");
+                $('input[id="mainForm:kvSelectedGrid"]').val('false');
+            });
+        };
+        
+        $(function(){
+            CJ.initCheckbox();            
+        });
+    </script>
+</h:head>
+<h:body>
+	<form action="${request.contextPath}/appLogout" method="POST">
+		<input type="submit" value="#{labels['app.logout']}" style="float:right;clear:both;z-index:100;" /> <input type="hidden"
+			name="${_csrf.parameterName}" value="${_csrf.token}" />
+	</form>
+	
+<h:form id="mainForm">
+    <p:breadCrumb homeDisplay="false" >
+        <p:menuitem value="#{labels['books']}" url="#"/>
+    </p:breadCrumb>
+    <p:layout style="border:0;" >
+	   <p:layoutUnit position="west" resizable="true" style="border:none;">
+
+		<p:menu>
+		        <p:menuitem value="#{labels['lastViews']}" icon="ui-icon-lightbulb"
+                    actionListener="#{bookListBean.list('LAST_VIEWS')}"  ajax="@form"
+                    styleClass="#{bookListBean.menuItem eq 'LAST_VIEWS' ? 'ui-state-active' : ''}" />    
+		        <p:menuitem value="#{labels['news']}"  icon="ui-icon-clock"
+		            actionListener="#{bookListBean.list('NEWS')}" ajax="@form" 
+		            styleClass="#{bookListBean.menuItem eq 'NEWS' ? 'ui-state-active' : ''}" />    
+		        <p:menuitem value="#{labels['favorites']}" icon="ui-icon-star"
+		            actionListener="#{bookListBean.list('FAVORITES')}"  ajax="@form"
+		            styleClass="#{bookListBean.menuItem eq 'FAVORITES' ? 'ui-state-active' : ''}" />
+		        <p:menuitem value="#{labels['all']}"  icon="ui-icon-bookmark" 
+		            actionListener="#{bookListBean.list('ALL')}"  ajax="@form"
+		            styleClass="#{bookListBean.menuItem eq 'ALL' ? 'ui-state-active' : ''}" />
+		        <p:menuitem value="#{labels['deprecated']}" icon="ui-icon-trash"
+		            actionListener="#{bookListBean.list('DEPRECATED')}"  ajax="@form"
+		            styleClass="#{bookListBean.menuItem eq 'DEPRECATED' ? 'ui-state-active' : ''}" />		      
+		    </p:menu>
+		    
+		    <p:tagCloud model="#{bookListBean.tagCloudModel}" id="tagCloudModel" style="border:none;">
+		      <p:ajax event="select" update="@form" listener="#{bookListBean.onSelectTag}" />
+		    </p:tagCloud>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="center" style="border:none;">
+		         <p:toolbar style="border:none;background:none;" >
+		            <f:facet name="left">
+			            <p:commandButton type="button" value="#{labels['all.page']}" icon="ui-icon-circle-check" onclick="CJ.selectAll();" />
+                        <p:commandButton type="button" value="#{labels['all.grid']}" icon="ui-icon-circle-check" onclick="CJ.selectAllGrid();" />
+                        <p:selectOneMenu value="#{bookListBean.idTag}" style="vertical-align:middle;">
+                            <f:selectItem itemLabel="" itemValue="" />
+                            <f:selectItems value="#{bookListBean.tags}" var="tag" itemLabel="#{tag.name}" itemValue="#{tag.idTag}"/>
+                        </p:selectOneMenu>
+                        <p:commandButton value="#{labels['asign']}" icon="ui-icon-tag" onclick="CJ.collect();" actionListener="#{bookListBean.asignTag}" />
+			        </f:facet>
+			 
+			        <f:facet name="right">
+			            <p:inputText value="#{bookListBean.searchValue}" />
+                        <p:commandButton icon="ui-icon-search" title="#{labels['search']}" 
+                            styleClass="ui-panel-titlebar-icon"
+                            actionListener="#{bookListBean.search()}"  update="@form" oncomplete="CJ.initCheckbox();"/>
+			        </f:facet>
+			 
+                </p:toolbar>
+                
+                <p:dataGrid var="book" value="#{bookListBean.books}" columns="4" 
+					layout="grid" rows="16" paginator="true" id="books"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="8,16,32">
+                    <p:ajax event="page" oncomplete="CJ.initCheckbox();" />
+
+					<p:panel style="text-align:center;border:none;">
+						<h:panelGrid columns="1" style="width:100%;text-align:center;border:none;">
+						  
+							<div class="ui-chkbox ui-widget custom-widget-checkbox" style="float:right;position:relative;top:15;right:15;z-index:1000;" >                  
+								<div class="ui-chkbox-box ui-widget ui-corner-all ui-state-default custom-checkbox">
+								    <input type="hidden" value="#{book.idBook}" />
+								    <span class="ui-chkbox-icon ui-icon ui-icon-blank ui-c "></span>
+								</div>
+							</div>
+						  
+						  <h:link outcome="viewBook">
+							<p:graphicImage library="img" name="#{book.thumbpath}"
+								alt="#{book.title}" title="#{book.title}" />
+							<f:param name="idBook" value="#{book.idBook}" />
+						 </h:link>
+						</h:panelGrid>
+					</p:panel>
+
+				</p:dataGrid>
+				<h:inputHidden id="kvSelected" value="#{bookListBean.idsSelected}" />
+                <h:inputHidden id="kvSelectedGrid" value="#{bookListBean.selectedGrid}" />
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" />
+			
+		</p:layoutUnit>
+	</p:layout>
+</h:form>
+</h:body>
+</html>

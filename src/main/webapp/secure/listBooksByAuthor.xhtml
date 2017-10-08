@@ -1,0 +1,38 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Booker</title>
+    <style type="text/css">
+            .ui-widget {
+                font-size: 80%;
+            }
+            </style>
+</h:head>
+<h:body>
+    <h:form>
+        <p:dataTable var="book" value="#{bookListByAuthorBean.books}" rows="5"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15">
+            <p:column headerText="Fecha de publicacion">
+                <h:outputText value="#{book.publicationDate}" >
+                    <f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+                </h:outputText>
+            </p:column>
+            
+            <p:column headerText="Titulo">
+                <h:outputText value="#{book.title}" />
+            </p:column>
+            
+            <p:column headerText="Edicion">
+                <h:outputText value="#{book.edition}" />
+            </p:column>
+ 
+            
+        </p:dataTable>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 
+    </h:form>
+</h:body>
+</html>

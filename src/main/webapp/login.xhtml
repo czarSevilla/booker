@@ -1,0 +1,24 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title><h:outputText value="#{labels['app.title']}" /></title>
+        <link href="#{resource['img:/favicon.ico']}" rel="shortcut icon" type="image/x-icon" />
+    </h:head>
+    <h:body>
+        <p:panel header="#{labels['login.title']}" style="width:40%;margin-left:30%;heigh:20%;margin-top:20%;">
+	        <font color="red">
+			     <h:outputLabel value="#{labels['login.error']}" rendered="#{param.error == 1}" />
+	        </font>
+			<form action="${request.contextPath}/appLogin" method="POST">
+				<h:outputLabel value="#{labels['login.username']}" />
+				<input type="text" name="app_username"/><br/><br/>
+				<h:outputLabel value="#{labels['login.password']}" />
+				<input type="password" name="app_password"/> <br/><br/>			
+				<input type="submit" value="#{labels['login.dologin']}"/>
+				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>			
+			</form>
+		</p:panel>
+    </h:body>
+</html> 

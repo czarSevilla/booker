@@ -1,0 +1,150 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title><h:outputText value="#{labels['app.title']}" /></title>
+    <link href="#{resource['img:/favicon.ico']}" rel="shortcut icon" type="image/x-icon" />
+    <style>
+    .ui-panelgrid-content {border:none;}
+    .ui-datalist-content {border:none;}
+    .ui-datagrid-content {border:none;}
+    .thin-button {padding:0;margin:0;}
+    .dt-book-tag > .ui-datatable-tablewrapper > table > thead {display:none;}
+    .dt-book-note > .ui-datatable-tablewrapper > table > thead {display:none; }
+    </style>
+</h:head>
+<h:body>
+    <h:form id="form">
+        <p:breadCrumb homeDisplay="false">
+	        <p:menuitem value="#{labels['books']}" url="listBooks.xhtml"/>
+	        <p:menuitem value="#{labels['viewBoook']}" url="#"/>
+	    </p:breadCrumb>
+        <p:panel id="bookDetail" header="#{bookViewBean.book.title}" style="border:none;">
+	        <h:panelGrid columns="2" style="border:none;">
+                <p:graphicImage library="img" name="#{bookViewBean.book.coverpath}" width="159" height="200"
+                                alt="#{bookViewBean.book.title}" title="#{bookViewBean.book.title}" />              
+                
+                
+                <p:panelGrid columns="4" layout="tabular" > 
+                    <h:outputText value="#{labels['rating']}" />
+                    <p:rating value="#{bookViewBean.rating}" >
+                        <p:ajax event="rate" listener="#{bookViewBean.onRate}" />
+                        <p:ajax event="cancel" listener="#{bookViewBean.onRate}" />
+                    </p:rating>
+                           
+                    <h:outputText value="#{labels['author']}" /> 
+                    <p:dataList value="#{bookViewBean.book.authors}" var="author" type="none"   >
+                        <p:commandLink actionListener="#{bookViewBean.showAuthorDetail(author.idAuthor)}" value="#{author.name}" />
+                    </p:dataList> 
+                    
+                    <h:outputText value="#{labels['edition']}" rendered="#{bookViewBean.book.edition != null}"/> 
+                    <h:outputText value="#{bookViewBean.book.edition}" rendered="#{bookViewBean.book.edition != null}"/> 
+                 
+                    <h:outputText value="#{labels['publisher']}" /> 
+                    <p:commandLink actionListener="#{bookViewBean.showPublisherDetail(bookViewBean.book.publisher.idPublisher)}" value="#{bookViewBean.book.publisher.name}" />
+                 
+                    <h:outputText value="#{labels['publication']}" /> 
+                    <h:outputText value="#{bookViewBean.book.publicationDate}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy" type="date" />
+                    </h:outputText>
+                    
+                    <h:outputText value="#{labels['language']}" /> 
+                    <h:outputText value="#{bookViewBean.book.language.name}" /> 
+                    
+                    <h:outputText value="#{labels['pages']}" /> 
+                    <h:outputText value="#{bookViewBean.book.pages}" /> 
+                    
+                    <h:outputText value="#{labels['size']}" /> 
+                    <h:outputText value="#{bookViewBean.book.filesize}" /> 
+                    
+                    <h:outputText value="#{labels['year']}" /> 
+                    <h:outputText value="#{bookViewBean.book.year}" /> 
+                    
+                    <h:outputText value="#{labels['filepath']}" /> 
+                    <h:outputText value="#{bookViewBean.book.filepath}" /> 
+                    
+                    <h:outputText value="#{labels['md5']}" /> 
+                    <h:outputText value="#{bookViewBean.book.md5}" />
+                    
+                    <h:outputText value="#{labels['filetype']}" /> 
+                    <h:outputText value="#{bookViewBean.book.filetype.code}" />
+                    
+                    <h:outputText value="#{labels['creation']}" /> 
+                    <h:outputText value="#{bookViewBean.book.creation}" >
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" type="both" />
+                    </h:outputText>
+                    
+                    <h:outputText value="#{labels['createdBy']}" /> 
+                    <h:outputText value="#{bookViewBean.book.createdBy}" />
+                    
+                    <h:outputText value="#{labels['deprecated']}" />
+                    <p:selectBooleanCheckbox value="#{bookViewBean.deprecated}" >
+			            <p:ajax listener="#{bookViewBean.toogleDeprecate}" />
+			        </p:selectBooleanCheckbox>
+			        
+			        <span></span>
+			        <p:button outcome="viewBook" value="#{labels['next']}" icon="ui-icon-triangle-1-e" iconPos="right" tabindex="3">
+                       <f:param name="idBook" value="#{bookViewBean.book.idBook + 1}" />
+                    </p:button>
+                </p:panelGrid>
+            </h:panelGrid>
+	    </p:panel>
+	    
+	    <p:panelGrid id="panelSubs" columns="2" layout="grid">
+	    
+		    <p:panel id="bookNotes" header="#{labels['notes.title']}" >
+		       <f:facet name="actions">
+		           <p:commandButton icon="ui-icon ui-icon-plusthick"
+		              value="#{labels['notes.add']}" 
+		               styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" 
+		               actionListener="#{bookViewBean.showAddNote}"
+		               title="#{labels['notes.add']}">
+		               <p:ajax event="dialogReturn" listener="#{bookViewBean.handleNote}" update=":form:bookNotes" />
+		           </p:commandButton>	            
+		        </f:facet>
+		        
+		        <p:dataTable var="note" value="#{bookViewBean.notes}" styleClass="dt-book-note">
+		          <p:column style="width:100px;">
+		              <h:outputText value="#{note.creation}">
+                          <f:convertDateTime pattern="dd/MM/yyy HH:mm:ss" type="both" />
+                      </h:outputText>
+		          </p:column>
+		          <p:column>
+		              <h:outputText value="#{note.note}" escape="false" />
+		          </p:column>
+		          <p:column style="width:32px;text-align:center;">
+		              <p:commandButton icon="ui-icon ui-icon-pencil" title="#{labels['notes.edit']}" 
+		                  actionListener="#{bookViewBean.showEditNote(note.idBookNote)}" >
+                          <p:ajax event="dialogReturn" listener="#{bookViewBean.handleNote}" update=":form:bookNotes" />
+                      </p:commandButton>
+		          </p:column>
+		        </p:dataTable>
+		    </p:panel>
+		    
+		    <p:panel id="bookTags" header="#{labels['tags.title']}" >
+		      <f:facet name="actions">
+		          <p:commandButton icon="ui-icon ui-icon-plusthick" value="#{labels['tags.add']}" actionListener="#{bookViewBean.addBookTag}" update=":form:bookTags" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" tabindex="2" />
+		          <p:autoComplete id="acTag" minQueryLength="2" value="#{bookViewBean.searchTag}" completeMethod="#{bookViewBean.completeTag}" effect="fade" styleClass="ui-panel-titlebar-icon ui-corner-all ui-state-default" tabindex="1"/>
+		      </f:facet>
+		       <p:panelGrid columns="1" layout="grid" style="border:none;">
+		           
+		           <p:dataTable var="bookTag" value="#{bookViewBean.tags}" styleClass="dt-book-tag">
+		              <p:column>
+		                  <h:outputText value="#{bookTag.tag.name}" />
+		              </p:column>
+		              <p:column style="width:32px;text-align:center;">
+		                  <p:commandButton icon="ui-icon ui-icon-close" 
+                          actionListener="#{bookViewBean.removeBookTag(bookTag.idBookTag)}"
+                          title="#{labels['tags.delete']}" update=":form:bookTags" />
+		              </p:column>
+		           </p:dataTable>
+		           
+		       </p:panelGrid>
+		    </p:panel>
+	    
+	    </p:panelGrid>
+	    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/> 
+    </h:form>
+</h:body>
+</html>
