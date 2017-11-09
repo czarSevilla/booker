@@ -1,0 +1,90 @@
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<title><h:outputText value="#{labels['app.title']}" /></title>
+	<link href="#{resource['img:/favicon.ico']}" rel="shortcut icon" type="image/x-icon" />
+	<script>
+        var CJ = {};
+ 
+        CJ.collect = function(){
+            var allVals = [];
+            $('.custom-checkbox').each(function() {
+                if ($(this).hasClass('ui-state-active')) {
+                    allVals.push($('input', this).val());
+                }                  
+            });
+            $('input[id="mainForm:kvSelected"]').val(allVals);
+        };
+ 
+        CJ.selectAll = function() {
+            $('.custom-checkbox .ui-chkbox-icon').each(function(){
+                var current = this;
+                $(current).addClass("ui-icon-check");
+                $(current).removeClass("ui-icon-blank");
+                $(current).parent().addClass("ui-state-active");
+            });
+            $('input[id="mainForm:kvSelectedGrid"]').val('false');
+        };
+        CJ.selectAllGrid = function() {
+            CJ.selectAll();
+            $('input[id="mainForm:kvSelectedGrid"]').val('true');
+        };
+        
+        CJ.selectTag = function(tagName) {
+        	$('a', 'div[id="mainForm:tagCloudModel"]').removeClass('ui-state-active');
+        	$('a', 'div[id="mainForm:tagCloudModel"]').filter(function(){
+        		return $(this).text() === tagName;
+        	}).addClass('ui-state-active'); 
+            
+        };
+        
+        CJ.initCheckbox = function() {
+        	$('.custom-checkbox').hover(function(){
+                $(this).toggleClass("ui-state-hover");
+            });
+ 
+            $('.custom-checkbox .ui-chkbox-icon').click(function(){
+                var current = this;
+                $(current).toggleClass("ui-icon-check");
+                $(current).toggleClass("ui-icon-blank");
+                $(current).parent().toggleClass("ui-state-active");
+                $('input[id="mainForm:kvSelectedGrid"]').val('false');
+            });
+        };
+        
+        $(function(){
+            CJ.initCheckbox();            
+        });
+    </script>
+</h:head>
+<h:body>
+
+        <ui:composition template="../common/layout.xhtml">
+            <ui:define name="content">
+            
+            
+    
+<h:form id="mainForm">
+    
+
+            <p:tagCloud model="#{bookListBean.tagCloudModel}" style="width:100%" >
+              <p:ajax event="select" update="@form" listener="#{bookListBean.onSelectTag}" />
+            </p:tagCloud>
+
+
+</h:form>
+            
+            
+                
+            </ui:define>
+        </ui:composition>
+
+
+
+
+	
+</h:body>
+</html>

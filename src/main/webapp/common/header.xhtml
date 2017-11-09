@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://java.sun.com/jsf/html"
+      >
+    <body>
+	    <ui:composition>
+		<p:menubar style="margin-top:20px">
+		  <p:submenu label="Books" icon="ui-icon-note" >
+              <p:menuitem value="News" url="listBooks.xhtml" />
+              <p:menuitem value="Favourites" url="#" />
+              <p:menuitem value="All" url="#" />
+              <p:menuitem value="Deprecated" url="#" />
+              <p:menuitem value="Recently viewed" url="#" />
+              <p:menuitem value="Add Book" url="#" />
+          </p:submenu>
+		  <p:menuitem value="Publishers" icon="ui-icon-home" url="#" />
+		  <p:menuitem value="Authors" icon="ui-icon-person" url="#" />
+		  <p:menuitem value="Tags" icon="ui-icon-tag" url="tags.xhtml" />
+		  
+		       <f:facet name="options">
+		          <form id="logoutForm" action="${request.contextPath}/appLogout" method="post">
+		            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+		            <button type="submit" value="Logout"  class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" >
+		              <span class="ui-button-text ui-c">Logout</span>
+		            </button>
+		        </form>
+				   
+			   </f:facet>
+		    </p:menubar>
+		
+	    </ui:composition>
+    </body>
+</html>

@@ -27,7 +27,7 @@ public class Book implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Long idBook;
 	private String title;
-	private String md5;
+	private String hash;
 	private Publisher publisher;
 	private Date publicationDate;
 	private Set<Author> authors;
@@ -65,14 +65,14 @@ public class Book implements Serializable {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
+	
 	@Column
-	public String getMd5() {
-		return md5;
+	public String getHash() {
+		return hash;
 	}
 
-	public void setMd5(String md5) {
-		this.md5 = md5;
+	public void setHash(String hash) {
+		this.hash = hash;
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)

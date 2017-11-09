@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         loginProcessingUrl("/appLogin").
         usernameParameter("app_username").
         passwordParameter("app_password").
-        defaultSuccessUrl("/secure/listBooks.xhtml").	
+        defaultSuccessUrl("/secure/default.xhtml").	
         failureUrl("/login.xhtml?error=1").
 		and().logout().    //logout configuration
 		logoutUrl("/appLogout"). 
